@@ -62,7 +62,9 @@ class Linear(Module):
         ##CODE
         # TODO: compute Z = X @ W.T + b. Cache whatever you need (e.g. X)
         # on self for use in backward().
-        raise NotImplementedError
+        self.X = X
+        Z = X @ self.W.T + self.b
+        return Z
         ##END
 
     def backward(self, dZ: np.ndarray) -> np.ndarray:
@@ -78,7 +80,14 @@ class Linear(Module):
         ##CODE
         # TODO: compute and store self.dW and self.db (gradients of the loss
         # w.r.t. W and b), then return dX, the gradient w.r.t. the input.
-        raise NotImplementedError
+        
+        # For z = W1*x1 + W2*x2 ...
+        # dL/dW = dL/dZ * dZ/dW
+        # dL/dX = dL/dZ * dZ/dX
+        self.dW[...] = dZ.T @ self.X
+        self.db[...] = dZ.sum(axis=0)
+        dX = dZ @ self.W
+        return dX
         ##END
 
     def parameters(self) -> list[tuple[np.ndarray, np.ndarray]]:
@@ -102,7 +111,9 @@ class Sigmoid(Module):
         """
         ##CODE
         # TODO: compute Y = sigmoid(Z). Cache what you need for backward().
-        raise NotImplementedError
+        self.Z = Z
+        self.Y = 1 / (1 + np.exp(-Z))
+        return self.Y
         ##END
 
     def backward(self, dY: np.ndarray) -> np.ndarray:
@@ -116,7 +127,12 @@ class Sigmoid(Module):
         """
         ##CODE
         # TODO: apply the chain rule through the sigmoid derivative.
-        raise NotImplementedError
+        
+        # IMPORTANT: dL/dZ = dL/dY * dY/dZ
+        self.dY = dY
+        dZ = dY * self.Y * (1 - self.Y)
+        return dZ
+        
         ##END
 
 
@@ -137,7 +153,10 @@ class ReLU(Module):
         """
         ##CODE
         # TODO: compute Y = max(Z, 0). Cache what you need for backward().
-        raise NotImplementedError
+        self.Z = Z
+        Y = np.maximum(self.Z, 0)
+        return Y
+        
         ##END
 
     def backward(self, dY: np.ndarray) -> np.ndarray:
@@ -151,7 +170,13 @@ class ReLU(Module):
         """
         ##CODE
         # TODO: apply the chain rule through the ReLU derivative.
-        raise NotImplementedError
+        # dL/dZ = dL/dY * dY/dZ
+        
+        # True = 1, False = 0
+        dY_dZ = (self.Z > 0)
+        
+        self.dZ = dY * (dY_dZ)
+        return self.dZ
         ##END
 
 
@@ -172,7 +197,8 @@ class Tanh(Module):
         """
         ##CODE
         # TODO: compute Y = tanh(Z). Cache what you need for backward().
-        raise NotImplementedError
+        self.Y = np.tanh(Z)
+        return self.Y
         ##END
 
     def backward(self, dY: np.ndarray) -> np.ndarray:
@@ -186,7 +212,11 @@ class Tanh(Module):
         """
         ##CODE
         # TODO: apply the chain rule through the tanh derivative.
-        raise NotImplementedError
+        
+        # dL/dZ = dL/dY * dY/dZ
+        dY_dZ = (1 - self.Y ** 2)
+        dZ = dY * dY_dZ
+        return dZ
         ##END
 
 
@@ -209,7 +239,11 @@ class MSE(Module):
         """
         ##CODE
         # TODO: compute the scalar MSE loss. Cache what you need for backward().
-        raise NotImplementedError
+        
+        self.mse = np.square(np.substract(Yt - Y)).mean()
+        self.Y = Y
+        self.Yt = Yt
+        return self.mse
         ##END
 
     def backward(self) -> np.ndarray:
@@ -220,7 +254,9 @@ class MSE(Module):
         """
         ##CODE
         # TODO: return the gradient of the MSE loss w.r.t. Y.
-        raise NotImplementedError
+        # d_mse = 2 * (y - y_hat)
+        d_mse =  2 * (self.Y - self.Yt)
+        return d_mse
         ##END
 
 
