@@ -240,7 +240,7 @@ class MSE(Module):
         ##CODE
         # TODO: compute the scalar MSE loss. Cache what you need for backward().
         
-        self.mse = np.square(np.substract(Yt - Y)).mean()
+        self.mse = ((Yt - Y)**2).mean()
         self.Y = Y
         self.Yt = Yt
         return self.mse
@@ -256,7 +256,7 @@ class MSE(Module):
         # TODO: return the gradient of the MSE loss w.r.t. Y.
         # d_mse = 2 * (y - y_hat)
         d_mse =  2 * (self.Y - self.Yt)
-        return d_mse
+        return
         ##END
 
 
