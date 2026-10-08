@@ -1,0 +1,5 @@
+# Install with: pip install -r requirements.txt
+# Pinned to match the versions the Gradescope autograder runs against.
+numpy==1.26.4
+matplotlib==3.8.4
+tqdm==4.66.4
