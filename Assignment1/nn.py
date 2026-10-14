@@ -62,6 +62,12 @@ class Linear(Module):
         ##CODE
         # TODO: compute Z = X @ W.T + b. Cache whatever you need (e.g. X)
         # on self for use in backward().
+        # print("\nX.shape")
+        # print(X.shape)
+        # print("self.W.shape")
+        # print(self.W.shape)
+        # print("self.b.shape")
+        # print(self.b.shape)
         self.X = X
         Z = X @ self.W.T + self.b
         return Z
@@ -240,6 +246,7 @@ class MSE(Module):
         ##CODE
         # TODO: compute the scalar MSE loss. Cache what you need for backward().
         
+        self.n = Y.size
         self.mse = ((Yt - Y)**2).mean()
         self.Y = Y
         self.Yt = Yt
@@ -254,9 +261,9 @@ class MSE(Module):
         """
         ##CODE
         # TODO: return the gradient of the MSE loss w.r.t. Y.
-        # d_mse = 2 * (y - y_hat)
-        d_mse =  2 * (self.Y - self.Yt)
-        return
+        # d_mse = 1/n * 2 * (y - y_hat) 
+        d_mse =  2 * (self.Y - self.Yt) / self.n
+        return d_mse
         ##END
 
 
@@ -279,7 +286,14 @@ class MAE(Module):
         """
         ##CODE
         # TODO: compute the scalar MAE loss. Cache what you need for backward().
-        raise NotImplementedError
+        
+        # TODO: Check if this works
+        self.mae = np.mean(np.absolute(Y - Yt))
+        
+        self.n = Y.size
+        self.Y = Y
+        self.Yt = Yt
+        return self.mae
         ##END
 
     def backward(self) -> np.ndarray:
@@ -291,5 +305,8 @@ class MAE(Module):
         ##CODE
         # TODO: return the gradient of the MAE loss w.r.t. Y (the MAE
         # derivative is undefined at 0; treat it as 0 there).
-        raise NotImplementedError
+        # d_mae =  2 * (self.Y - self.Yt)
+
+        dY = np.sign(self.Y - self.Yt) / self.n
+        return dY
         ##END

@@ -24,7 +24,8 @@ class MLPClassifier_1(nn.Module):
         """
         ##CODE
         # TODO: run X through self.layer and return the result.
-        raise NotImplementedError
+        Z = self.layer.forward(X)
+        return Z
         ##END
 
     def backward(self, dZ: np.ndarray) -> np.ndarray:
@@ -39,7 +40,8 @@ class MLPClassifier_1(nn.Module):
         """
         ##CODE
         # TODO: backpropagate dZ through self.layer and return dX.
-        raise NotImplementedError
+        dX = self.layer.backward(dZ)
+        return dX
         ##END
 
 
@@ -76,7 +78,11 @@ class MLPClassifier_2(nn.Module):
         """
         ##CODE
         # TODO: chain self.layer1 -> self.act1 -> self.layer2 and return Z2.
-        raise NotImplementedError
+        
+        Z = self.layer1.forward(X)
+        H = self.act1.forward(Z)
+        Z2 = self.layer2.forward(H)
+        return Z2
         ##END
 
     def backward(self, dZ2: np.ndarray) -> np.ndarray:
@@ -92,5 +98,8 @@ class MLPClassifier_2(nn.Module):
         ##CODE
         # TODO: backpropagate dZ2 through layer2 -> act1 -> layer1, in that
         # order, and return dX.
-        raise NotImplementedError
+        dZ = self.layer2.backward(dZ2)
+        dH = self.act1.backward(dZ)
+        dZ2 = self.layer1.backward(dH)
+        return dZ2
         ##END

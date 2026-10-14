@@ -30,7 +30,7 @@ MODEL_SPECS = {
     "MLP_2_Sigmoid_MSE": {"kind": "mlp2", "activation": nn.Sigmoid, "loss": nn.MSE},
     "MLP_2_Sigmoid_MAE": {"kind": "mlp2", "activation": nn.Sigmoid, "loss": nn.MAE},
     "MLP_2_Tanh": {"kind": "mlp2", "activation": nn.Tanh, "loss": nn.MSE},
-}
+} 
 
 HIDDEN_FEATURES = 64
 
@@ -108,7 +108,14 @@ def train_model(
             #   3. compute the loss: loss = loss_fn(pred, yb)
             #   4. backward pass: model.backward(loss_fn.backward())
             #   5. take an optimizer step
-            raise NotImplementedError
+            optimizer.zero_grad()
+            pred = model(xb)
+            loss = loss_fn(pred, yb)
+            
+            # Takes dL/dPred to compute every dW and db
+            model.backward(loss_fn.backward())
+            
+            optimizer.step()
             ##END
 
             epoch_loss += float(loss) * len(idx)
@@ -207,8 +214,11 @@ def run_experiment(
         "test_pred": pred,
         "test_target": target,
     }
+    
+    print("running results")
 
     if is_noisy_name(dataset_name):
+        print("\n --- getting gt_mse")
         clean_test_n = (ds.clean_test - mean) / std
         _, Y_test_clean = make_windows(clean_test_n, context, horizon)
         target_clean = Y_test_clean * std + mean
