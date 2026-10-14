@@ -1,0 +1,8 @@
+
+*.pyc
+*.json
+*.png
+*.tex
+*.csv
+
+*.npz
